@@ -1,35 +1,35 @@
 <?php
-require "../config/db.php";
-require "../includes/functions.php";
-include "../includes/header.php";
+require_once '../includes/functions.php';
 
 $id = $_GET['id'];
+$student = getStudentById($id);
 
-$stmt = $pdo->prepare("SELECT * FROM student_enrollment WHERE id=?");
-$stmt->execute([$id]);
-$student = $stmt->fetch();
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $stmt = $pdo->prepare(
-        "UPDATE student_enrollment SET name=?, email=?, course=?, year=? WHERE id=?"
-    );
-    $stmt->execute([
-        $_POST['name'],
-        $_POST['email'],
-        $_POST['course'],
-        $_POST['year'],
-        $id
-    ]);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    updateStudent($id, $_POST['name'], $_POST['email'], $_POST['course'], $_POST['year']);
     header("Location: index.php");
+    exit;
 }
 ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Student</title>
+<link rel="stylesheet" href="/student_enrollment_system/assets/css/style.css">
 
-<form method="POST">
-    Name: <input name="name" value="<?= e($student['name']) ?>"><br>
-    Email: <input name="email" value="<?= e($student['email']) ?>"><br>
-    Course: <input name="course" value="<?= e($student['course']) ?>"><br>
-    Year: <input name="year" value="<?= e($student['year']) ?>"><br>
-    <button>Update Student</button>
+</head>
+<body>
+
+<h1>Edit Student</h1>
+
+<form method="post">
+    <input name="name" value="<?= $student['name'] ?>" required>
+    <input name="email" value="<?= $student['email'] ?>" required>
+    <input name="course" value="<?= $student['course'] ?>" required>
+    <input name="year" value="<?= $student['year'] ?>" required>
+    <button>Update</button>
 </form>
 
-<?php include "../includes/footer.php"; ?>
+<a href="index.php">⬅ Back</a>
+
+</body>
+</html>

@@ -1,12 +1,17 @@
 <?php
 require "../config/db.php";
-include "../includes/header.php";
+require "../includes/functions.php";
+check_login();
 
-// Handle form submission
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Prepare and execute insert query
-    $stmt = $pdo->prepare(
-        "INSERT INTO student_enrollment (name, email, course, year) VALUES (?, ?, ?, ?)"
+if($_POST){
+    verify_csrf();
+
+    if(!filter_var($_POST['email'],FILTER_VALIDATE_EMAIL))
+        die("Invalid email");
+
+    $stmt=$pdo->prepare(
+        "INSERT INTO student_enrollment(name,email,course,year)
+         VALUES(?,?,?,?)"
     );
     $stmt->execute([
         $_POST['name'],
@@ -15,28 +20,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_POST['year']
     ]);
 
-    // Redirect to index after adding
-    header("Location: index.php");
-    exit;
+    header("Location:index.php");
 }
+
+include "../includes/header.php";
 ?>
 
-<h2>Add New Student</h2>
-
 <form method="POST">
-    <label>Name:</label>
-    <input type="text" name="name" required><br><br>
+<input type="hidden" name="csrf" value="<?=csrf()?>">
 
-    <label>Email:</label>
-    <input type="email" name="email" required><br><br>
+Name:<input name="name" required>
+Email:<input name="email" required>
+Course:<input name="course" required>
+Year:<input name="year" required>
 
-    <label>Course:</label>
-    <input type="text" name="course" required><br><br>
-
-    <label>Year:</label>
-    <input type="number" name="year" required><br><br>
-
-    <button type="submit">Add Student</button>
+<button>Add</button>
 </form>
 
 <?php include "../includes/footer.php"; ?>

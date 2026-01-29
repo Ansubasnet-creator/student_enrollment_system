@@ -1,7 +1,9 @@
 <?php
-require "../config/db.php";
+require_once "../includes/functions.php";
 
-$stmt = $pdo->prepare("DELETE FROM student_enrollment WHERE id=?");
-$stmt->execute([$_GET['id']]);
+if (isset($_GET['id'])) {
+    deleteStudent($_GET['id']);
+}
 
 header("Location: index.php");
+exit;

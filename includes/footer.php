@@ -1,5 +1,5 @@
 <hr>
-<p>© Student Enrollment System</p>
-<script src="../assets/js/ajax-search.js"></script>
+<p>Student System</p>
+<script src="../assets/js/search.js"></script>
 </body>
 </html>

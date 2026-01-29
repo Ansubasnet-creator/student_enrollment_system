@@ -1,4 +1,9 @@
 <?php
-function e($value) {
-    return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+session_start();
+
+function check_login(){
+    if(empty($_SESSION['admin'])){
+        header("Location: login.php");
+        exit;
+    }
 }

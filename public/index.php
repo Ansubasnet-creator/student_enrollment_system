@@ -1,38 +1,26 @@
 <?php
-require "../config/db.php";
-require "../includes/functions.php";
-include "../includes/header.php";
+require "db.php";
 
-$stmt = $pdo->query("SELECT * FROM student_enrollment");
-$students = $stmt->fetchAll();
+if($_POST){
+    $pdo->prepare("INSERT INTO students(name,email) VALUES(?,?)")
+        ->execute([$_POST['name'],$_POST['email']]);
+}
+
+$students = $pdo->query("SELECT * FROM students")->fetchAll();
 ?>
 
-<a href="add.php">Add Student</a><br><br>
+<h2>Student Enrollment</h2>
 
-<input type="text" id="search" placeholder="Search students by name or course">
-<div id="result"></div>
+<form method="POST">
+Name: <input name="name"><br>
+Email: <input name="email"><br>
+<button>Add Student</button>
+</form>
 
-<table border="1" width="100%">
-<tr>
-    <th>Name</th>
-    <th>Email</th>
-    <th>Course</th>
-    <th>Year</th>
-    <th>Action</th>
-</tr>
+<hr>
 
-<?php foreach ($students as $s): ?>
-<tr>
-    <td><?= e($s['name']) ?></td>
-    <td><?= e($s['email']) ?></td>
-    <td><?= e($s['course']) ?></td>
-    <td><?= e($s['year']) ?></td>
-    <td>
-        <a href="edit.php?id=<?= $s['id'] ?>">Edit</a> |
-        <a href="delete.php?id=<?= $s['id'] ?>" onclick="return confirm('Delete?')">Delete</a>
-    </td>
-</tr>
+<h3>Students List</h3>
+
+<?php foreach($students as $s): ?>
+<p><?= $s['name'] ?> - <?= $s['email'] ?></p>
 <?php endforeach; ?>
-</table>
-
-<?php include "../includes/footer.php"; ?>

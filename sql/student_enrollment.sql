@@ -1,11 +1,15 @@
-CREATE DATABASE student_enrollment;
+CREATE DATABASE student;
 
-USE student_enrollment;
+USE student;
 
-CREATE TABLE student_enrollment (
+CREATE TABLE students (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    course VARCHAR(100) NOT NULL,
-    year INT NOT NULL
+    name VARCHAR(100),
+    email VARCHAR(100)
+);
+
+CREATE TABLE admins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50),
+    password VARCHAR(255)
 );
