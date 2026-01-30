@@ -1,14 +1,11 @@
 <?php
-require "../config/db.php";
+include "../config/db.php";
 
-$q="%".$_GET['q']."%";
-
-$stmt=$pdo->prepare(
- "SELECT * FROM student_enrollment
-  WHERE name LIKE ? OR course LIKE ? LIMIT 5"
+$term = $_GET['term'];
+$result = $conn->query(
+    "SELECT name FROM students WHERE name LIKE '%$term%'"
 );
-$stmt->execute([$q,$q]);
 
-foreach($stmt as $r){
- echo "<p>{$r['name']} - {$r['course']}</p>";
+while ($row = $result->fetch_assoc()) {
+    echo "<div>".$row['name']."</div>";
 }

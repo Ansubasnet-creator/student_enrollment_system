@@ -1,146 +1,65 @@
-/* ===== Reset ===== */
 * {
     box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
 }
 
-/* ===== Body ===== */
 body {
-    font-family: "Inter", "Segoe UI", sans-serif;
-    background: linear-gradient(135deg, #0f0f1a, #151528);
-    color: #e6e6f0;
-    padding: 40px;
+    margin: 0;
+    min-height: 100vh;
+    background: #f2f3f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* ===== Heading ===== */
+.container {
+    background: #ffffff;
+    width: 600px;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
 h2 {
     text-align: center;
-    color: #c7bfff;
-    margin-bottom: 25px;
-    letter-spacing: 1px;
+    color: #4b2e83;
 }
 
-/* ===== Form ===== */
-form {
-    background: rgba(25, 25, 45, 0.95);
-    padding: 28px;
-    max-width: 520px;
-    margin: auto;
-    border-radius: 14px;
-    border: 1px solid rgba(167, 139, 250, 0.25);
-    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
-}
-
-/* ===== Inputs ===== */
 input {
     width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    background: #101022;
-    border: 1px solid #2f2f55;
-    border-radius: 8px;
-    color: #e6e6f0;
-    font-size: 14px;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
 }
 
-input::placeholder {
-    color: #8a8aa5;
-}
-
-input:focus {
-    outline: none;
-    border-color: #a78bfa;
-    box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.2);
-}
-
-/* ===== Button ===== */
-button {
+.btn {
     width: 100%;
-    padding: 12px;
-    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    padding: 10px;
+    background: #4b2e83;
+    color: #fff;
     border: none;
-    border-radius: 8px;
-    color: #ffffff;
-    font-size: 15px;
-    font-weight: 500;
+    border-radius: 6px;
     cursor: pointer;
-    transition: 0.3s ease;
 }
 
-button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+.btn:hover {
+    background: #3a2268;
 }
 
-/* ===== Table ===== */
 table {
     width: 100%;
-    margin-top: 40px;
     border-collapse: collapse;
-    background: rgba(25, 25, 45, 0.95);
-    border-radius: 14px;
-    overflow: hidden;
-    border: 1px solid rgba(167, 139, 250, 0.25);
+    margin-top: 15px;
 }
 
-/* ===== Table Header ===== */
-th {
-    background: #1c1c38;
-    color: #c7bfff;
-    padding: 14px;
-    text-transform: uppercase;
-    font-size: 13px;
-    letter-spacing: 1px;
-}
-
-/* ===== Table Data ===== */
-td {
-    padding: 14px;
-    border-bottom: 1px solid #2f2f55;
+th, td {
+    padding: 8px;
+    border: 1px solid #ccc;
     text-align: center;
-    font-size: 14px;
 }
 
-/* ===== Hover Row ===== */
-tr:hover {
-    background: rgba(167, 139, 250, 0.08);
-}
-
-/* ===== Links ===== */
 a {
-    color: #a78bfa;
+    color: #4b2e83;
     text-decoration: none;
-    font-weight: 500;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-/* ===== Action Buttons ===== */
-.action a {
-    margin: 0 6px;
-}
-
-/* ===== Messages ===== */
-.success {
-    color: #22c55e;
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-.error {
-    color: #ef4444;
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-/* ===== Mobile ===== */
-@media (max-width: 600px) {
-    body {
-        padding: 20px;
-    }
-
-    form {
-        padding: 20px;
-    }
 }

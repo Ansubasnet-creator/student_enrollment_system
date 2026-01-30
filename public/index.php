@@ -1,26 +1,50 @@
 <?php
-require "db.php";
+require_once "../config/auth.php";
+require_once "../config/db.php";
 
-if($_POST){
-    $pdo->prepare("INSERT INTO students(name,email) VALUES(?,?)")
-        ->execute([$_POST['name'],$_POST['email']]);
-}
-
-$students = $pdo->query("SELECT * FROM students")->fetchAll();
+$result = mysqli_query($conn, "SELECT * FROM students");
 ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
 
-<h2>Student Enrollment</h2>
+<div class="container">
+    <h2>Student Enrollment</h2>
 
-<form method="POST">
-Name: <input name="name"><br>
-Email: <input name="email"><br>
-<button>Add Student</button>
-</form>
+    <a href="add.php">+ Add Student</a>
 
-<hr>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Year</th>
+            <th>Action</th>
+        </tr>
 
-<h3>Students List</h3>
+        <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+        <tr>
+            <td><?= $row["name"] ?></td>
+            <td><?= $row["email"] ?></td>
+            <td><?= $row["study_year"] ?></td>
+            <td>
+                <a href="edit.php?id=<?= $row["id"] ?>">Edit</a> |
+                <a href="delete.php?id=<?= $row["id"] ?>"
+                   onclick="return confirm('Delete this student?')">
+                   Delete
+                </a>
+            </td>
+        </tr>
+        <?php } ?>
+    </table>
 
-<?php foreach($students as $s): ?>
-<p><?= $s['name'] ?> - <?= $s['email'] ?></p>
-<?php endforeach; ?>
+    <form action="logout.php" method="POST" style="margin-top:15px;">
+        <button class="btn">Logout</button>
+    </form>
+</div>
+
+</body>
+</html>

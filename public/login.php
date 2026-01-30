@@ -1,23 +1,50 @@
 <?php
-require "../config/db.php";
+require_once "../config/db.php";
 session_start();
 
-if($_POST){
-    $stmt=$pdo->prepare("SELECT * FROM admins WHERE username=?");
-    $stmt->execute([$_POST['username']]);
-    $a=$stmt->fetch();
+$error = "";
 
-    if($a && password_verify($_POST['password'],$a['password'])){
-        $_SESSION['admin']=true;
-        header("Location: index.php");
-        exit;
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
+
+    $query = "SELECT * FROM admins WHERE username = ?";
+    $stmt = mysqli_prepare($con, $query);
+    mysqli_stmt_bind_param($stmt, "s", $username);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($row = mysqli_fetch_assoc($result)) {
+        if (password_verify($password, $row['password'])) {
+            $_SESSION['admin_logged_in'] = true;
+            $_SESSION['admin_id'] = $row['id'];
+            header("Location: dashboard.php");
+            exit();
+        } else {
+            $error = "Invalid password.";
+        }
+    } else {
+        $error = "No such user.";
     }
-    echo "Login failed";
 }
 ?>
-
-<form method="POST">
-Username: <input name="username"><br>
-Password: <input type="password" name="password"><br>
-<button>Login</button>
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <h2>Admin Login</h2>
+    <?php if ($error): ?>
+        <p style="color:red;"><?php echo $error; ?></p>
+    <?php endif; ?>
+    <form method="post">
+        <label>Username:</label><br>
+        <input type="text" name="username" required><br>
+        <label>Password:</label><br>
+        <input type="password" name="password" required><br><br>
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>

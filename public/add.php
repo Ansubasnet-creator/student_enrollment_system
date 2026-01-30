@@ -1,40 +1,33 @@
 <?php
-require "../config/db.php";
-require "../includes/functions.php";
-check_login();
+require_once "../config/db.php";
+require_once "../config/auth.php";
 
-if($_POST){
-    verify_csrf();
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $name = trim($_POST['name']);
+    $email = trim($_POST['email']);
 
-    if(!filter_var($_POST['email'],FILTER_VALIDATE_EMAIL))
-        die("Invalid email");
+    $stmt = mysqli_prepare($con, "INSERT INTO students (name, email) VALUES (?, ?)");
+    mysqli_stmt_bind_param($stmt, "ss", $name, $email);
+    mysqli_stmt_execute($stmt);
 
-    $stmt=$pdo->prepare(
-        "INSERT INTO student_enrollment(name,email,course,year)
-         VALUES(?,?,?,?)"
-    );
-    $stmt->execute([
-        $_POST['name'],
-        $_POST['email'],
-        $_POST['course'],
-        $_POST['year']
-    ]);
-
-    header("Location:index.php");
+    header("Location: students.php");
+    exit();
 }
-
-include "../includes/header.php";
 ?>
-
-<form method="POST">
-<input type="hidden" name="csrf" value="<?=csrf()?>">
-
-Name:<input name="name" required>
-Email:<input name="email" required>
-Course:<input name="course" required>
-Year:<input name="year" required>
-
-<button>Add</button>
-</form>
-
-<?php include "../includes/footer.php"; ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Student</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <h2>Add Student</h2>
+    <form method="post">
+        <label>Name:</label><br>
+        <input type="text" name="name" required><br>
+        <label>Email:</label><br>
+        <input type="email" name="email" required><br><br>
+        <button type="submit">Add</button>
+    </form>
+</body>
+</html>

@@ -1,5 +1,11 @@
-document.getElementById("search")?.addEventListener("keyup", function(){
- fetch("search.php?q="+this.value)
-  .then(r=>r.text())
-  .then(d=>document.getElementById("result").innerHTML=d);
+document.addEventListener("DOMContentLoaded", () => {
+    const search = document.getElementById("search");
+
+    search.addEventListener("keyup", () => {
+        fetch("search.php?term=" + search.value)
+            .then(res => res.text())
+            .then(data => {
+                console.log(data);
+            });
+    });
 });
