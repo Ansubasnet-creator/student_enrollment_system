@@ -1,13 +1,17 @@
 <?php
-require_once "../config/db.php";
-require_once "../config/auth.php";
-
-if (isset($_GET['id'])) {
-    $id = intval($_GET['id']);
-    $stmt = mysqli_prepare($con, "DELETE FROM students WHERE id = ?");
-    mysqli_stmt_bind_param($stmt, "i", $id);
-    mysqli_stmt_execute($stmt);
+session_start();
+if (!isset($_SESSION['admin'])) {
+    header("Location: login.php");
+    exit;
 }
+include("../config/db.php");
+
+$id = $_GET['id'];
+$sql = "DELETE FROM students WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $id);
+$stmt->execute();
 
 header("Location: students.php");
-exit();
+exit;
+?>

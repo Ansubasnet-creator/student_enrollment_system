@@ -1,9 +1,18 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) session_start();
+?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Student Management System</title>
+    <title>Student Enrollment System</title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <script src="../assets/js/search.js" defer></script>
 </head>
 <body>
-    <h2>Student Management System</h2>
-    <hr>
+<div class="topbar">Student Enrollment System</div>
+
+<?php if (!empty($_SESSION['admin_id'])): ?>
+    <?php include __DIR__ . "/navbar.php"; ?>
+<?php endif; ?>
+
+<div class="container">

@@ -1,37 +1,45 @@
 <?php
-require_once "../config/db.php";
-require_once "../config/auth.php";
+session_start();
+if (!isset($_SESSION['admin'])) {
+    header("Location: login.php");
+    exit;
+}
+include("../config/db.php");
 
-$id = intval($_GET['id']);
-$result = mysqli_query($con, "SELECT * FROM students WHERE id = $id");
-$row = mysqli_fetch_assoc($result);
+$id = $_GET['id'];
+$sql = "SELECT * FROM students WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$student = $result->fetch_assoc();
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $name = trim($_POST['name']);
-    $email = trim($_POST['email']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $course = $_POST['course'];
 
-    $stmt = mysqli_prepare($con, "UPDATE students SET name = ?, email = ? WHERE id = ?");
-    mysqli_stmt_bind_param($stmt, "ssi", $name, $email, $id);
-    mysqli_stmt_execute($stmt);
-
-    header("Location: students.php");
-    exit();
+    $sql = "UPDATE students SET name=?, email=?, course=? WHERE id=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssi", $name, $email, $course, $id);
+    if ($stmt->execute()) {
+        header("Location: students.php");
+        exit;
+    } else {
+        $error = "Error updating student.";
+    }
 }
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit Student</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-</head>
-<body>
+<?php include("../includes/header.php"); ?>
+<div class="form-box">
     <h2>Edit Student</h2>
-    <form method="post">
-        <label>Name:</label><br>
-        <input type="text" name="name" value="<?php echo htmlspecialchars($row['name']); ?>" required><br>
-        <label>Email:</label><br>
-        <input type="email" name="email" value="<?php echo htmlspecialchars($row['email']); ?>" required><br><br>
+    <?php if (!empty($error)) echo "<p class='error'>$error</p>"; ?>
+    <form method="POST">
+        <input type="text" name="name" value="<?php echo $student['name']; ?>" required>
+        <input type="email" name="email" value="<?php echo $student['email']; ?>" required>
+        <input type="text" name="course" value="<?php echo $student['course']; ?>" required>
         <button type="submit">Update</button>
     </form>
-</body>
-</html>
+    <a href="students.php" class="btn">Back</a>
+</div>
+<?php include("../includes/footer.php"); ?>

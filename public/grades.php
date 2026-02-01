@@ -1,26 +1,39 @@
 <?php
-require "../config/db.php";
-require "../includes/functions.php";
+require_once "../config/auth.php";
+require_once "../config/db.php";
 include "../includes/header.php";
 
-if ($_SERVER["REQUEST_METHOD"]=="POST") {
-    if (!verify_csrf_token($_POST['csrf_token'])) die("Invalid CSRF token");
-    $stmt=$pdo->prepare("INSERT INTO grades (student_id,subject,grade) VALUES (?,?,?)");
-    $stmt->execute([$_POST['student_id'],$_POST['subject'],$_POST['grade']]);
-}
-$students=$pdo->query("SELECT * FROM student_enrollment")->fetchAll();
+$sql = "
+SELECT g.id, s.name, g.subject, g.grade
+FROM grades g
+JOIN students s ON g.student_id = s.id
+ORDER BY s.name
+";
+$result = $conn->query($sql);
 ?>
+
 <h2>Grades</h2>
-<form method="POST">
-    <input type="hidden" name="csrf_token" value="<?= generate_csrf_token() ?>">
-    <label>Student:</label>
-    <select name="student_id">
-        <?php foreach($students as $s): ?>
-        <option value="<?= $s['id'] ?>"><?= e($s['name']) ?></option>
-        <?php endforeach; ?>
-    </select>
-    <label>Subject:</label><input name="subject" required>
-    <label>Grade:</label><input name="grade" required>
-    <button>Add Grade</button>
-</form>
+<a href="add_grade.php">+ Add Grade</a>
+
+<table>
+<tr>
+    <th>Student</th>
+    <th>Subject</th>
+    <th>Grade</th>
+    <th>Action</th>
+</tr>
+
+<?php while ($row = $result->fetch_assoc()): ?>
+<tr>
+    <td><?= htmlspecialchars($row['name']) ?></td>
+    <td><?= htmlspecialchars($row['subject']) ?></td>
+    <td><?= htmlspecialchars($row['grade']) ?></td>
+    <td>
+        <a href="edit_grade.php?id=<?= $row['id'] ?>">Edit</a> |
+        <a href="delete_grade.php?id=<?= $row['id'] ?>" onclick="return confirm('Delete?')">Delete</a>
+    </td>
+</tr>
+<?php endwhile; ?>
+</table>
+
 <?php include "../includes/footer.php"; ?>

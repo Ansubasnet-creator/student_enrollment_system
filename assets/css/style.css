@@ -1,65 +1,219 @@
+/* ==========================
+   General Reset & Body
+========================== */
 * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
-    font-family: "Segoe UI", Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    margin: 0;
-    min-height: 100vh;
-    background: #f2f3f7;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background: #121212;
+    color: #e0e0e0;
+    line-height: 1.6;
 }
 
-.container {
-    background: #ffffff;
-    width: 600px;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-}
-
-h2 {
+/* ==========================
+   Topbar
+========================== */
+.topbar {
+    background: #1f1f1f;
+    color: #FFD700;
+    padding: 20px;
+    font-size: 26px;
+    font-weight: 700;
     text-align: center;
-    color: #4b2e83;
+    letter-spacing: 1.5px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    border-bottom: 2px solid #FFD700;
 }
 
-input {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+/* ==========================
+   Navbar
+========================== */
+.navbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #1a1a1a;
+    padding: 14px 22px;
+    border-bottom: 1px solid #333;
 }
 
-.btn {
-    width: 100%;
-    padding: 10px;
-    background: #4b2e83;
+.navbar a {
+    color: #e0e0e0;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    background: rgba(255,255,255,0.05);
+}
+
+.navbar a:hover {
+    background: #FFD700;
+    color: #121212;
+}
+
+.navbar .logout-link {
+    margin-left: auto;
+    background: #b22222;
+    font-weight: 600;
+}
+
+.navbar .logout-link:hover {
+    background: #8b1a1a;
+}
+
+/* ==========================
+   Containers
+========================== */
+.container,
+.login-container,
+.student-box {
+    background: #1e1e1e;
+    border-radius: 10px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+    border: 1px solid #333;
+}
+
+/* ==========================
+   Headings
+========================== */
+h2 {
+    margin-bottom: 20px;
+    color: #FFD700;
+    font-size: 28px;
+    border-bottom: 2px solid #444;
+    display: inline-block;
+    padding-bottom: 6px;
+    font-weight: 700;
+}
+
+/* ==========================
+   Buttons
+========================== */
+.btn, .btn-add {
+    background: linear-gradient(135deg, #4B0082, #6A0DAD);
     color: #fff;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-weight: 600;
     border: none;
-    border-radius: 6px;
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.btn:hover {
-    background: #3a2268;
+.btn:hover, .btn-add:hover {
+    background: #FFD700;
+    color: #121212;
 }
 
+/* ==========================
+   FORMS (Normal forms only)
+========================== */
+form.form-standard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+form.form-standard input,
+form.form-standard select {
+    flex: 1 1 250px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #2a2a2a;
+    color: #e0e0e0;
+    font-size: 15px;
+}
+
+form.form-standard input:focus,
+form.form-standard select:focus {
+    border-color: #FFD700;
+    box-shadow: 0 0 8px rgba(255,215,0,0.4);
+    outline: none;
+}
+
+/* ==========================
+   SEARCH BAR (FIXED 🔥)
+========================== */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.search-bar input[type="text"] {
+    width: 260px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #2a2a2a;
+    color: #e0e0e0;
+    font-size: 14px;
+}
+
+.search-bar input:focus {
+    border-color: #FFD700;
+    outline: none;
+    box-shadow: 0 0 6px rgba(255,215,0,0.4);
+}
+
+/* ==========================
+   Tables
+========================== */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #1a1a1a;
 }
 
-th, td {
-    padding: 8px;
-    border: 1px solid #ccc;
-    text-align: center;
+table th, table td {
+    padding: 14px 18px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+    font-size: 15px;
 }
 
-a {
-    color: #4b2e83;
+table th {
+    background: #2a2a2a;
+    color: #FFD700;
+    text-transform: uppercase;
+}
+
+table tr:hover {
+    background: #2c2c2c;
+}
+
+table a {
+    color: #FFD700;
+    font-weight: 500;
     text-decoration: none;
+}
+
+table a:hover {
+    text-decoration: underline;
+}
+
+/* ==========================
+   Responsive
+========================== */
+@media (max-width: 768px) {
+    .search-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-bar input {
+        width: 100%;
+    }
 }

@@ -1,33 +1,32 @@
 <?php
-require_once "../config/db.php";
 require_once "../config/auth.php";
+require_once "../config/db.php";
 
-$result = mysqli_query($con, "SELECT * FROM students");
+$result = $conn->query("SELECT * FROM students");
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Students</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-</head>
-<body>
+
+<link rel="stylesheet" href="../assets/css/style.css">
+
+<div class="dashboard-box">
     <h2>Student List</h2>
-    <a href="add.php">Add Student</a> | <a href="logout.php">Logout</a>
-    <table border="1" cellpadding="8">
+    <div class="dashboard-links">
+        <a href="add.php">Add Student</a> | <a href="logout.php">Logout</a>
+    </div>
+    <table>
         <tr>
-            <th>ID</th><th>Name</th><th>Email</th><th>Actions</th>
+            <th>ID</th><th>Name</th><th>Email</th><th>Course</th><th>Actions</th>
         </tr>
-        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+        <?php while ($row = $result->fetch_assoc()): ?>
         <tr>
-            <td><?php echo $row['id']; ?></td>
-            <td><?php echo htmlspecialchars($row['name']); ?></td>
-            <td><?php echo htmlspecialchars($row['email']); ?></td>
+            <td><?= $row['id'] ?></td>
+            <td><?= htmlspecialchars($row['name']) ?></td>
+            <td><?= htmlspecialchars($row['email']) ?></td>
+            <td><?= htmlspecialchars($row['course']) ?></td>
             <td>
-                <a href="edit.php?id=<?php echo $row['id']; ?>">Edit</a> |
-                <a href="delete.php?id=<?php echo $row['id']; ?>" onclick="return confirm('Delete this student?');">Delete</a>
+                <a href="edit.php?id=<?= $row['id'] ?>">Edit</a> |
+                <a href="delete.php?id=<?= $row['id'] ?>" onclick="return confirm('Delete this student?');">Delete</a>
             </td>
         </tr>
         <?php endwhile; ?>
     </table>
-</body>
-</html>
+</div>

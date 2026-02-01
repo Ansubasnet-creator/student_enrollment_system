@@ -1,41 +1,31 @@
 <?php
-session_start();
-include __DIR__ . '/../db.php';
-if (!isset($_SESSION['admin'])) {
-    header("Location: login.php");
-    exit;
-}
+require_once "../config/auth.php";
+require_once "../config/db.php";
+
+$success = $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id = $_POST['id'];
-    $name = $_POST['name'];
-    $course = $_POST['course'];
-
     $stmt = $conn->prepare("UPDATE students SET name=?, course=? WHERE id=?");
-    $stmt->bind_param("ssi", $name, $course, $id);
+    $stmt->bind_param("ssi", $_POST['name'], $_POST['course'], $_POST['id']);
 
     if ($stmt->execute()) {
-        echo "Student updated successfully!";
+        $success = "Student updated successfully!";
     } else {
-        echo "Error: " . $stmt->error;
+        $error = "Error: " . $stmt->error;
     }
 }
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Student Enrollment - Update Student</title>
-    <link rel="stylesheet" href="../assets/styles.css">
-</head>
-<body>
-<div class="box">
+
+<link rel="stylesheet" href="../assets/css/style.css">
+
+<div class="login-box">
     <h2>Update Student</h2>
+    <?php if ($error) echo "<p class='error'>$error</p>"; ?>
+    <?php if ($success) echo "<p class='success'>$success</p>"; ?>
     <form method="POST">
-        <input type="number" name="id" placeholder="Student ID" required><br>
-        <input type="text" name="name" placeholder="New Name" required><br>
-        <input type="text" name="course" placeholder="New Course" required><br>
+        <input type="number" name="id" placeholder="Student ID" required>
+        <input type="text" name="name" placeholder="New Name" required>
+        <input type="text" name="course" placeholder="New Course" required>
         <button type="submit">Update</button>
     </form>
 </div>
-</body>
-</html>

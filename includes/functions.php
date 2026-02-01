@@ -1,30 +1,15 @@
 <?php
-// Start session if not already started
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
+// DO NOT start session here
+
+function e($string) {
+    return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
 }
 
-/**
- * Generate CSRF token
- */
-function generate_csrf_token() {
-    if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return $_SESSION['csrf_token'];
+function validate_email($email) {
+    return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
-/**
- * Validate CSRF token
- */
-function validate_csrf_token($token) {
-    return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);
+function validate_name($name) {
+    // Allows letters and spaces only
+    return preg_match("/^[a-zA-Z ]+$/", $name);
 }
-
-/**
- * Hash password (for creating users)
- */
-function hash_password($password) {
-    return password_hash($password, PASSWORD_DEFAULT);
-}
-?>

@@ -1,33 +1,53 @@
 <?php
-require_once "../config/db.php";
 require_once "../config/auth.php";
+require_once "../config/db.php";
+require_once "../includes/functions.php";
+include "../includes/header.php";
 
-$result = mysqli_query($con, "SELECT * FROM students");
+$result = $conn->query("
+    SELECT students.*, courses.course_name, instructors.full_name AS instructor_name
+    FROM students
+    LEFT JOIN courses ON students.course_id = courses.id
+    LEFT JOIN instructors ON students.instructor_id = instructors.id
+");
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Students</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-</head>
-<body>
-    <h2>Student List</h2>
-    <a href="add.php">Add Student</a> | <a href="logout.php">Logout</a>
-    <table border="1" cellpadding="8">
-        <tr>
-            <th>ID</th><th>Name</th><th>Email</th><th>Actions</th>
-        </tr>
-        <?php while ($row = mysqli_fetch_assoc($result)): ?>
-        <tr>
-            <td><?php echo $row['id']; ?></td>
-            <td><?php echo htmlspecialchars($row['name']); ?></td>
-            <td><?php echo htmlspecialchars($row['email']); ?></td>
-            <td>
-                <a href="edit.php?id=<?php echo $row['id']; ?>">Edit</a> |
-                <a href="delete.php?id=<?php echo $row['id']; ?>" onclick="return confirm('Delete this student?');">Delete</a>
-            </td>
-        </tr>
-        <?php endwhile; ?>
+<div class="container">
+    <h2>Students</h2>
+
+    <div class="search-bar">
+        <input type="text" id="studentSearch" placeholder="Search students...">
+        <a class="btn-add" href="add_student.php">Add Student</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Course</th>
+                <th>Instructor</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="studentTable">
+            <?php while ($row = $result->fetch_assoc()): ?>
+            <tr>
+                <td><?= e($row['name']) ?></td>
+                <td><?= e($row['email']) ?></td>
+                <td><?= e($row['course_name'] ?? 'N/A') ?></td>
+                <td><?= e($row['instructor_name'] ?? 'N/A') ?></td>
+                <td><?= e($row['created_at']) ?></td>
+                <td>
+                    <a href="edit_student.php?id=<?= $row['id'] ?>">Edit</a> |
+                    <a href="delete_student.php?id=<?= $row['id'] ?>" onclick="return confirm('Delete student?')">Delete</a>
+                </td>
+            </tr>
+            <?php endwhile; ?>
+        </tbody>
     </table>
-</body>
-</html>
+</div>
+
+<link rel="stylesheet" href="../assets/css/style.css">
+<script src="../assets/js/search.js" defer></script>
+<?php include "../includes/footer.php"; ?>
