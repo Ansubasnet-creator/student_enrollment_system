@@ -1,107 +1,74 @@
-CREATE DATABASE IF NOT EXISTS student_enrollment;
-USE student_enrollment;
+CREATE TABLE `admins` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
--- Disable FK checks to avoid drop errors
-SET FOREIGN_KEY_CHECKS = 0;
+CREATE TABLE `instructors` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `full_name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `expertise` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 ;
 
--- Drop tables (order matters)
-DROP TABLE IF EXISTS grades;
-DROP TABLE IF EXISTS course_enrollments;
-DROP TABLE IF EXISTS courses;
-DROP TABLE IF EXISTS instructors;
-DROP TABLE IF EXISTS students;
-DROP TABLE IF EXISTS admins;
+CREATE TABLE `courses` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `course_code` varchar(50) NOT NULL,
+  `course_name` varchar(255) NOT NULL,
+  `category` varchar(100) NOT NULL,
+  `level` enum('Beginner','Intermediate','Advanced') NOT NULL,
+  `instructor_id` int(11) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `course_code` (`course_code`),
+  KEY `instructor_id` (`instructor_id`),
+  CONSTRAINT `courses_ibfk_1` FOREIGN KEY (`instructor_id`) REFERENCES `instructors` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 ;
 
-SET FOREIGN_KEY_CHECKS = 1;
+CREATE TABLE `students` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `course` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `course_id` int(11) DEFAULT NULL,
+  `instructor_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  KEY `course_id` (`course_id`),
+  KEY `instructor_id` (`instructor_id`),
+  CONSTRAINT `students_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`),
+  CONSTRAINT `students_ibfk_2` FOREIGN KEY (`instructor_id`) REFERENCES `instructors` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 ;
 
--- ======================
--- ADMINS TABLE
--- ======================
-CREATE TABLE admins (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL
-);
+CREATE TABLE `grades` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `student_id` int(11) NOT NULL,
+  `subject` varchar(100) NOT NULL,
+  `grade` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `student_id` (`student_id`),
+  CONSTRAINT `grades_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 ;
 
--- Default admin
-INSERT INTO admins (username, password)
-VALUES ('ansu', '$2y$10$fbDeJwyO5V9dnneNm3n1GeTOST35D9CcJprIyvNS11.SYqAcP/Tyq');
+CREATE TABLE `course_enrollments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `student_id` int(11) NOT NULL,
+  `course_id` int(11) NOT NULL,
+  `enrolled_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `student_id` (`student_id`,`course_id`),
+  KEY `course_id` (`course_id`),
+  CONSTRAINT `course_enrollments_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `course_enrollments_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ======================
--- STUDENTS TABLE
--- ======================
-CREATE TABLE students (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    course VARCHAR(100) DEFAULT NULL
-);
-
--- ======================
--- INSTRUCTORS TABLE
--- ======================
-CREATE TABLE instructors (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- ======================
--- COURSES TABLE
--- ======================
-CREATE TABLE courses (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    course_code VARCHAR(50) NOT NULL,
-    course_name VARCHAR(255) NOT NULL,
-    category VARCHAR(100) NOT NULL,
-    level ENUM('Beginner', 'Intermediate', 'Advanced') NOT NULL,
-    instructor_id INT DEFAULT NULL,
-    description TEXT DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX (course_code),
-    INDEX (instructor_id),
-    CONSTRAINT fk_courses_instructor
-        FOREIGN KEY (instructor_id)
-        REFERENCES instructors(id)
-        ON DELETE SET NULL
-        ON UPDATE CASCADE
-);
-
--- ======================
--- COURSE ENROLLMENTS TABLE
--- ======================
-CREATE TABLE course_enrollments (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    student_id INT NOT NULL,
-    course_id INT NOT NULL,
-    enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX (student_id),
-    INDEX (course_id),
-    CONSTRAINT fk_enroll_student
-        FOREIGN KEY (student_id)
-        REFERENCES students(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE,
-    CONSTRAINT fk_enroll_course
-        FOREIGN KEY (course_id)
-        REFERENCES courses(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-);
-
--- ======================
--- GRADES TABLE
--- ======================
-CREATE TABLE grades (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    student_id INT NOT NULL,
-    subject VARCHAR(100) NOT NULL,
-    grade VARCHAR(10) NOT NULL,
-    INDEX (student_id),
-    CONSTRAINT fk_grades_student
-        FOREIGN KEY (student_id)
-        REFERENCES students(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-);
+INSERT INTO `admins` (`id`, `username`, `password`) VALUES
+(1, 'ansu', '$2y$10$fbDeJwyO5V9dnneNm3n1GeTOST35D9CcJprIyvNS11.SYqAcP/Tyq');
