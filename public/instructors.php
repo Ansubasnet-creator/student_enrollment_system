@@ -4,41 +4,37 @@ require_once "../config/db.php";
 require_once "../includes/functions.php";
 include "../includes/header.php";
 
-$result = $conn->query("SELECT * FROM instructors");
+// Fetch instructors
+$sql = "SELECT id, full_name, email, created_at FROM instructors ORDER BY full_name";
+$result = $conn->query($sql);
 ?>
-<div class="container">
-    <h2>Instructors</h2>
 
-    <div class="search-bar">
-        <input type="text" id="instructorSearch" placeholder="Search instructors...">
-        <a class="btn-add" href="add_instructor.php">Add Instructor</a>
-    </div>
+<h2>Instructors</h2>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Expertise</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="instructorTable">
-            <?php while ($row = $result->fetch_assoc()): ?>
+<a href="add_instructor.php" class="btn btn-primary">Add Instructor</a>
+
+<table border="1" cellpadding="10">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Created At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php while($row = $result->fetch_assoc()): ?>
             <tr>
                 <td><?= e($row['full_name']) ?></td>
                 <td><?= e($row['email']) ?></td>
-                <td><?= e($row['expertise']) ?></td>
+                <td><?= e($row['created_at']) ?></td>
                 <td>
                     <a href="edit_instructor.php?id=<?= $row['id'] ?>">Edit</a> |
-                    <a href="delete_instructor.php?id=<?= $row['id'] ?>" onclick="return confirm('Delete instructor?')">Delete</a>
+                    <a href="delete_instructor.php?id=<?= $row['id'] ?>" onclick="return confirm('Delete this instructor?')">Delete</a>
                 </td>
             </tr>
-            <?php endwhile; ?>
-        </tbody>
-    </table>
-</div>
+        <?php endwhile; ?>
+    </tbody>
+</table>
 
-<link rel="stylesheet" href="../assets/css/style.css">
-<script src="../assets/js/search.js" defer></script>
 <?php include "../includes/footer.php"; ?>

@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <h2>Edit Grade</h2>
 
-<form method="post">
+<form method="post" class="form-standard">
     <select name="student_id" required>
         <?php while ($s = $students->fetch_assoc()): ?>
             <option value="<?= $s['id'] ?>" <?= $s['id']==$grade['student_id']?'selected':'' ?>>

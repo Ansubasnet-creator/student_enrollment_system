@@ -4,42 +4,47 @@ require_once "../config/db.php";
 require_once "../includes/functions.php";
 include "../includes/header.php";
 
-$error = "";
-$id = $_GET['id'] ?? 0;
-
-// Fetch student
-$student = $conn->query("SELECT * FROM students WHERE id=$id")->fetch_assoc();
-if (!$student) {
-    echo "<div class='error'>Student not found.</div>";
-    include "../includes/footer.php";
-    exit;
+/* ===============================
+   Validate ID
+================================ */
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    die("Invalid student ID");
 }
 
-// Fetch courses and instructors
-$courses = $conn->query("SELECT id, course_name FROM courses ORDER BY course_name");
-$instructors = $conn->query("SELECT id, full_name FROM instructors ORDER BY full_name");
+$id = (int) $_GET['id'];
+
+/* ===============================
+   Fetch student
+================================ */
+$stmt = $conn->prepare("SELECT * FROM students WHERE id=?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$student = $stmt->get_result()->fetch_assoc();
+
+if (!$student) {
+    die("Student not found");
+}
+
+/* ===============================
+   Handle update
+================================ */
+$error = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $name = trim($_POST['name']);
+    $name  = trim($_POST['name']);
     $email = trim($_POST['email']);
-    $course_id = $_POST['course_id'];
-    $instructor_id = $_POST['instructor_id'];
 
-    // Validation
-    if (!$name || !preg_match("/^[a-zA-Z\s]+$/", $name)) {
-        $error = "Please enter a valid name (letters only).";
+    if (!$name) {
+        $error = "Name is required.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = "Please enter a valid email.";
-    } elseif (!$course_id) {
-        $error = "Please select a course.";
-    } elseif (!$instructor_id) {
-        $error = "Please select an instructor.";
+        $error = "Enter a valid email.";
     } else {
-        $stmt = $conn->prepare(
-            "UPDATE students SET name=?, email=?, course_id=?, instructor_id=? WHERE id=?"
+        $update = $conn->prepare(
+            "UPDATE students SET name=?, email=? WHERE id=?"
         );
-        $stmt->bind_param("ssiii", $name, $email, $course_id, $instructor_id, $id);
-        $stmt->execute();
+        $update->bind_param("ssi", $name, $email, $id);
+        $update->execute();
+
         header("Location: students.php");
         exit;
     }
@@ -52,27 +57,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <div class="error"><?= e($error) ?></div>
 <?php endif; ?>
 
-<form method="post">
-    <input type="text" name="name" value="<?= e($_POST['name'] ?? $student['name']) ?>" required>
-    <input type="email" name="email" value="<?= e($_POST['email'] ?? $student['email']) ?>" required>
+<form method="post" class="edit-student">
+    <input type="text"
+           name="name"
+           value="<?= e($student['name']) ?>"
+           required>
 
-    <select name="course_id" required>
-        <option value="">-- Select Course --</option>
-        <?php while($c = $courses->fetch_assoc()): ?>
-            <option value="<?= $c['id'] ?>" <?= (($student['course_id'] ?? '') == $c['id']) ? 'selected' : '' ?>>
-                <?= e($c['course_name']) ?>
-            </option>
-        <?php endwhile; ?>
-    </select>
-
-    <select name="instructor_id" required>
-        <option value="">-- Select Instructor --</option>
-        <?php while($i = $instructors->fetch_assoc()): ?>
-            <option value="<?= $i['id'] ?>" <?= (($student['instructor_id'] ?? '') == $i['id']) ? 'selected' : '' ?>>
-                <?= e($i['full_name']) ?>
-            </option>
-        <?php endwhile; ?>
-    </select>
+    <input type="email"
+           name="email"
+           value="<?= e($student['email']) ?>"
+           required>
 
     <button type="submit">Update Student</button>
 </form>

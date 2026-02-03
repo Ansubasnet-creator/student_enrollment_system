@@ -16,30 +16,48 @@ if (!$instructor) {
     exit;
 }
 
+$error = "";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $_POST['full_name'];
-    $email = $_POST['email'];
-    $expertise = $_POST['expertise'];
+    $name = trim($_POST['full_name']);
+    $email = trim($_POST['email']);
+    $expertise = trim($_POST['expertise']);
 
-    $update = $conn->prepare("UPDATE instructors SET full_name=?, email=?, expertise=? WHERE id=?");
-    $update->bind_param("sssi", $name, $email, $expertise, $id);
-    $update->execute();
+    if (!$name) {
+        $error = "Full Name is required.";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Enter a valid email.";
+    } else {
+        $update = $conn->prepare(
+            "UPDATE instructors SET full_name=?, email=?, expertise=? WHERE id=?"
+        );
+        $update->bind_param("sssi", $name, $email, $expertise, $id);
+        $update->execute();
 
-    header("Location: instructors.php");
-    exit;
+        header("Location: instructors.php");
+        exit;
+    }
 }
 ?>
 
 <div class="container">
     <h2>Edit Instructor</h2>
-    <form method="post">
-        <label>Full Name</label>
-        <input type="text" name="full_name" value="<?= e($instructor['full_name']) ?>" required>
-        <label>Email</label>
-        <input type="email" name="email" value="<?= e($instructor['email']) ?>" required>
-        <label>Expertise</label>
-        <input type="text" name="expertise" value="<?= e($instructor['expertise']) ?>">
-        <button class="btn" type="submit">Update Instructor</button>
+
+    <?php if ($error): ?>
+        <div class="error"><?= htmlspecialchars($error) ?></div>
+    <?php endif; ?>
+
+    <form method="post" class="edit-instructor">
+        <input type="text" name="full_name" placeholder="Full Name"
+               value="<?= htmlspecialchars($instructor['full_name']) ?>" required>
+
+        <input type="email" name="email" placeholder="Email"
+               value="<?= htmlspecialchars($instructor['email']) ?>" required>
+
+        <input type="text" name="expertise" placeholder="Expertise"
+               value="<?= htmlspecialchars($instructor['expertise']) ?>">
+
+        <button type="submit">Update Instructor</button>
     </form>
 </div>
 

@@ -40,11 +40,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <div class="error"><?= e($error) ?></div>
 <?php endif; ?>
 
-<form method="post">
+<form method="post" class="form-standard">
     <input type="text" name="course_code" placeholder="Course Code" value="<?= e($_POST['course_code'] ?? '') ?>" required>
     <input type="text" name="course_name" placeholder="Course Name" value="<?= e($_POST['course_name'] ?? '') ?>" required>
     <input type="text" name="category" placeholder="Category" value="<?= e($_POST['category'] ?? '') ?>" required>
-    <input type="text" name="level" placeholder="Level" value="<?= e($_POST['level'] ?? '') ?>" required>
+
+    <!-- Dropdown for ENUM level -->
+    <select name="level" required>
+        <option value="">-- Select Level --</option>
+        <option value="Beginner" <?= (($_POST['level'] ?? '') == 'Beginner') ? 'selected' : '' ?>>Beginner</option>
+        <option value="Intermediate" <?= (($_POST['level'] ?? '') == 'Intermediate') ? 'selected' : '' ?>>Intermediate</option>
+        <option value="Advanced" <?= (($_POST['level'] ?? '') == 'Advanced') ? 'selected' : '' ?>>Advanced</option>
+    </select>
 
     <select name="instructor_id" required>
         <option value="">-- Select Instructor --</option>

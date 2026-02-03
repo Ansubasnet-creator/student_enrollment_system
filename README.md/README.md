@@ -33,7 +33,6 @@ Table: student_enrollment
 ## Future Enhancements
 - Admin authentication
 - Role-based access control
-- Attendance & grades module
 - Security improvements (CSRF, validation)
 
 ## Author
